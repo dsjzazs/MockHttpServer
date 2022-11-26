@@ -20,7 +20,12 @@ namespace MockHttpServer
                 return RequestContent[request];
 
             var buffer = new byte[request.ContentLength64];
-            var data = request.InputStream.Read(buffer, 0, buffer.Length);
+            var offset = 0;
+            while (offset < request.ContentLength64)
+            {
+                var len = request.InputStream.Read(buffer, offset, buffer.Length - offset);
+                offset += len;
+            }
             RequestContent[request] = Encoding.UTF8.GetString(buffer);
 
             return RequestContent[request];
